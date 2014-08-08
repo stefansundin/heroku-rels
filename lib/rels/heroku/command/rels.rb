@@ -15,40 +15,63 @@ class Heroku::Command::Rels < Heroku::Command::Base
     validate_arguments!
     release_count = options[:num].nil? ? 10 : options[:num].to_i 
 
-    apps = self.class.heroku_apps
-    apps = [app] if apps.empty? # trigger 'No app specified' message
+    remotes = self.class.heroku_remotes
 
-    apps.each do |app|
+    # trigger 'No app specified' message
+    remotes.push ['--app', app] if remotes.empty? or options[:app]
 
-      # this is simply copied from 3.9.6/lib/heroku/command/releases.rb
-      # https://github.com/heroku/heroku/blob/master/lib/heroku/command/releases.rb
+    output = {}
+    remotes.map do |remote|
+      Thread.new(remote) do |remote, app|
+        # capture stdout
+        Thread.current[:output] = []
 
-      releases_data = api.get_releases(app).body.sort_by do |release|
-        release["name"][1..-1].to_i
-      end.reverse.slice(0, release_count)
+        # this is simply copied from 3.9.6/lib/heroku/command/releases.rb
+        # https://github.com/heroku/heroku/blob/master/lib/heroku/command/releases.rb
 
-      unless releases_data.empty?
-        releases = releases_data.map do |release|
-          [
-            release["name"],
-            truncate(release["descr"], 40),
-            release["user"],
-            time_ago(release['created_at'])
-          ]
+        releases_data = api.get_releases(app).body.sort_by do |release|
+          release["name"][1..-1].to_i
+        end.reverse.slice(0, release_count)
+
+        unless releases_data.empty?
+          releases = releases_data.map do |release|
+            [
+              release["name"],
+              truncate(release["descr"], 40),
+              release["user"],
+              time_ago(release['created_at'])
+            ]
+          end
+
+          styled_header("#{app} Releases")
+          styled_array(releases, :sort => false)
+        else
+          display("#{app} has no releases.")
         end
 
-        styled_header("#{app} Releases")
-        styled_array(releases, :sort => false)
-      else
-        display("#{app} has no releases.")
+        # capture stdout
+        output[remote] = Thread.current[:output].join "\n"
       end
+    end.map(&:join)
+
+    output.sort.each do |remote, output|
+      puts output
+      puts
     end
   end
 
 private
 
-  def self.heroku_apps
-    `git remote -v`.scan(/heroku\.com:(.+)\.git/).uniq
+  def self.heroku_remotes
+    `git remote -v`.scan(/^(.+)\t.+heroku\.com:(.+)\.git/).uniq
+  end
+
+  def puts(*arg)
+    if Thread.current[:output].nil?
+      super *arg
+    else
+      Thread.current[:output].push arg
+    end
   end
 
 end

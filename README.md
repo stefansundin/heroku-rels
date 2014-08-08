@@ -7,18 +7,25 @@ To install:
 heroku plugins:install git://github.com/stefansundin/heroku-rels.git
 ```
 
-To uninstall:
-```bash
-heroku plugins:uninstall heroku-rels
-```
-
 Usage:
 ```bash
 heroku rels
 ```
 
+To update:
+```bash
+heroku plugins:update heroku-rels
+```
+
+To uninstall:
+```bash
+heroku plugins:uninstall heroku-rels
+```
+
 
 # Changelog
+
+[![RSS](http://stefansundin.github.io/img/feed.png) Release feed](https://github.com/stefansundin/heroku-rels/releases.atom)
 
 **0.1** - 2014-08-08:
 - First release.

@@ -15,7 +15,10 @@ class Heroku::Command::Rels < Heroku::Command::Base
     validate_arguments!
     release_count = options[:num].nil? ? 10 : options[:num].to_i 
 
-    self.class.heroku_apps.each do |remote, app|
+    apps = self.class.heroku_apps
+    apps = [app] if apps.empty? # trigger 'No app specified' message
+
+    apps.each do |app|
 
       # this is simply copied from 3.9.6/lib/heroku/command/releases.rb
       # https://github.com/heroku/heroku/blob/master/lib/heroku/command/releases.rb
@@ -45,7 +48,7 @@ class Heroku::Command::Rels < Heroku::Command::Base
 private
 
   def self.heroku_apps
-    `git remote -v`.scan(/^(.+)\t.+heroku\.com:(.+)\.git/).uniq
+    `git remote -v`.scan(/heroku\.com:(.+)\.git/).uniq
   end
 
 end

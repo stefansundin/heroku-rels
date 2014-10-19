@@ -1,5 +1,6 @@
 require "heroku/command/base"
 
+# lists releases for all your heroku remotes
 # MIT License, same as heroku-cli
 
 class Heroku::Command::Rels < Heroku::Command::Base
@@ -60,10 +61,18 @@ class Heroku::Command::Rels < Heroku::Command::Base
     end
   end
 
+  # rels:version
+  #
+  # prints version of rels (v0.2)
+  #
+  def version
+    puts "v0.2"
+  end
+
 private
 
   def self.heroku_remotes
-    `git remote -v`.scan(/^(.+)\t.+heroku\.com:(.+)\.git/).uniq
+    `git remote -v 2>/dev/null`.scan(/^(.+)\t.+heroku\.com:(.+)\.git/).uniq
   end
 
   def puts(*arg)

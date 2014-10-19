@@ -1,6 +1,6 @@
 # Heroku rels
 
-It's like running `heroku releases` for every heroku remote, but you don't have to type all the damn app names. Useful if you have production and staging for the same app.
+It's like running `heroku releases` for every heroku remote, but you don't have to type all the damn app names. Useful if you have many environments for the same app, e.g. production, staging, qa, etc.
 
 To install:
 ```bash
@@ -10,6 +10,7 @@ heroku plugins:install git://github.com/stefansundin/heroku-rels.git
 Usage:
 ```bash
 heroku rels
+heroku rels:version
 ```
 
 To update:
@@ -25,7 +26,11 @@ heroku plugins:uninstall heroku-rels
 
 # Changelog
 
-[![RSS](http://stefansundin.github.io/img/feed.png) Release feed](https://github.com/stefansundin/heroku-rels/releases.atom)
+[![RSS](https://stefansundin.github.io/img/feed.png) Release feed](https://github.com/stefansundin/heroku-rels/releases.atom)
 
-**0.1** - 2014-08-08:
+**0.2** - 2014-10-18 - [diff](https://github.com/stefansundin/heroku-rels/compare/v0.1...v0.2):
+- Added `rels:version`.
+- Small fixes.
+
+**0.1** - 2014-08-08 - [diff](https://github.com/stefansundin/heroku-rels/compare/26ac7cd...v0.1):
 - First release.

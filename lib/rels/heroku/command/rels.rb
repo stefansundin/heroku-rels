@@ -24,34 +24,38 @@ class Heroku::Command::Rels < Heroku::Command::Base
     output = {}
     remotes.map do |remote|
       Thread.new(remote) do |remote, app|
-        # capture stdout
-        Thread.current[:output] = []
+        begin
+          # capture stdout
+          Thread.current[:output] = []
 
-        # this is simply copied from 3.9.6/lib/heroku/command/releases.rb
-        # https://github.com/heroku/heroku/blob/master/lib/heroku/command/releases.rb
+          # this is simply copied from 3.9.6/lib/heroku/command/releases.rb
+          # https://github.com/heroku/heroku/blob/master/lib/heroku/command/releases.rb
 
-        releases_data = api.get_releases(app).body.sort_by do |release|
-          release["name"][1..-1].to_i
-        end.reverse.slice(0, release_count)
+          releases_data = api.get_releases(app).body.sort_by do |release|
+            release["name"][1..-1].to_i
+          end.reverse.slice(0, release_count)
 
-        unless releases_data.empty?
-          releases = releases_data.map do |release|
-            [
-              release["name"],
-              truncate(release["descr"], 40),
-              release["user"],
-              time_ago(release['created_at'])
-            ]
+          unless releases_data.empty?
+            releases = releases_data.map do |release|
+              [
+                release["name"],
+                truncate(release["descr"], 40),
+                release["user"],
+                time_ago(release['created_at'])
+              ]
+            end
+
+            styled_header("#{app} Releases")
+            styled_array(releases, :sort => false)
+          else
+            display("#{app} has no releases.")
           end
 
-          styled_header("#{app} Releases")
-          styled_array(releases, :sort => false)
-        else
-          display("#{app} has no releases.")
+          # capture stdout
+          output[remote] = Thread.current[:output].join "\n"
+        rescue
+          output[remote] = "Something went wrong fetching releases for #{app}."
         end
-
-        # capture stdout
-        output[remote] = Thread.current[:output].join "\n"
       end
     end.map(&:join)
 

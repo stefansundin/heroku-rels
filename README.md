@@ -10,6 +10,7 @@ heroku plugins:install git://github.com/stefansundin/heroku-rels.git
 Usage:
 ```bash
 heroku rels
+heroku rels:info
 heroku rels:version
 ```
 
@@ -27,6 +28,10 @@ heroku plugins:uninstall heroku-rels
 # Changelog
 
 [![RSS](https://stefansundin.github.io/img/feed.png) Release feed](https://github.com/stefansundin/heroku-rels/releases.atom)
+
+**0.3** - 2015-03-12 - [diff](https://github.com/stefansundin/heroku-rels/compare/v0.2...v0.3):
+- Added `rels:info`.
+- Small fixes.
 
 **0.2** - 2014-10-18 - [diff](https://github.com/stefansundin/heroku-rels/compare/v0.1...v0.2):
 - Added `rels:version`.

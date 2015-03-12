@@ -148,10 +148,10 @@ class Heroku::Command::Rels < Heroku::Command::Base
 
   # rels:version
   #
-  # prints version of rels (v0.2)
+  # prints version of rels (v0.3)
   #
   def version
-    puts "v0.2"
+    puts "v0.3"
   end
 
 private
